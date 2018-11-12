@@ -1,14 +1,14 @@
 /*
    With this program your can build your own weatherstation, which can
-   monitor the temperature, the humidity and the airpressure which sends it
-   to a 16x2 LCD Display and to Blynk App via Wifi so you can check it on your
-   Smartphone.
+   monitor the temperature, the humidity and the airpressure and sends it
+   to a 16x2 LCD display and to Blynk App via Wifi so you can check it on your
+   smartphone.
 
    You need:
    - NodeMCU v1.0
-   - 16x2 LCD Display
-   - BME280 Sensor
-   - Smartphone with Blynk App
+   - 16x2 LCD display
+   - BME280 sensor
+   - smartphone with Blynk App
 
 
         %%%%%Wiring%%%%%
@@ -37,14 +37,14 @@
 #include <Adafruit_BME280.h>
 
 #define BLYNK_PRINT Serial
-#define SEALEVELPRESSURE_HPA (1013.25) // Airpressure at Sealevel for your Location
+#define SEALEVELPRESSURE_HPA (1013.25) // airpressure at sealevel for your location
 
-char auth[] = ""; // Your Blynk Authentification Token
-char ssid[] = "";  // Your Wifi Name
-char pass[] = ""; // Your Wifi Password
+char auth[] = ""; // your Blynk authentification token
+char ssid[] = "";  // your Wifi name
+char pass[] = ""; // your Wifi password
 
 const int rs = D8, en = D7, d4 = D5, d5 = D4, d6 = D3, d7 = D0;
-unsigned long delayTime = 6000; // Delay im ms for sending Data to Display and Blynk App
+unsigned long delayTime = 6000; // delay im ms for sending Data to Display and Blynk App
 int Temp1;
 float Temp2;
 int Hum1;
@@ -59,12 +59,12 @@ BlynkTimer timer;
 
 void setup() 
 {
-  Blynk.begin(auth, ssid, pass);  // Start Blynk
-  lcd.begin(16, 2); // Start LCD
-  digitalWrite(D6, HIGH); // turn LCD Backlight on
+  Blynk.begin(auth, ssid, pass);  // start Blynk
+  lcd.begin(16, 2); // start LCD
+  digitalWrite(D6, HIGH); // turn LCD backlight on
   bool status;
   status = bme.begin();
-  if (!status)  // check if Sensor ist connected
+  if (!status)  // check if sensor ist connected
   {
     lcd.setCursor(0, 0);
     lcd.print("No Sensor found");
@@ -79,14 +79,14 @@ void setup()
   lcd.setCursor(9, 0);
   lcd.print("Press");
 
-  timer.setInterval(1000L, myTimerEvent); // Online Time in ms
+  timer.setInterval(1000L, myTimerEvent); // online-time in ms
 }
 
 void loop()
 {
-  Blynk.run();  // Start Blynk
-  timer.run();  // Start Timer
-  printValues();  // function for printing Values on Display and Blynk App
+  Blynk.run();  // start Blynk
+  timer.run();  // start timer
+  printValues();  // function for printing values on display and Blynk App
   delay(delayTime);
   if (millis() >= 86400000)
   { // restart Device every 24h
@@ -96,7 +96,7 @@ void loop()
 
 void printValues()
 {
-  Temp2 = bme.readTemperature();  // read Temperature from Sensor
+  Temp2 = bme.readTemperature();  // read temperature from sensor
   Temp1 = Temp2;
   lcd.setCursor(0, 1);
   lcd.print("     ");
@@ -106,12 +106,12 @@ void printValues()
   } else {
     lcd.print("-");
   }
-  lcd.print(Temp1); // print Temperature to LCD
+  lcd.print(Temp1); // print temperature to LCD
   lcd.print("C");
-  Blynk.virtualWrite(V1, Temp2);  // print Temperature to Virtual-Pin 1 on Blynk App
+  Blynk.virtualWrite(V1, Temp2);  // print temperature to Virtual-Pin 1 on Blynk App
 
-  Hum2 = bme.readHumidity();  // read Humidity from Sensor
-  if (Hum2 >= 100)  // I had problems with humidity spikes over 100% lol
+  Hum2 = bme.readHumidity();  // read humidity from sensor
+  if (Hum2 >= 100)  // I had problems with humidity spikes over 100%, lol
   {
     Hum2 = 99.99;
   }
@@ -119,21 +119,21 @@ void printValues()
   lcd.setCursor(5, 1);
   lcd.print("    ");
   lcd.setCursor(5, 1);
-  lcd.print(Hum1);  // print Humidity to LCD
+  lcd.print(Hum1);  // print humidity to LCD
   lcd.print("%");
-  Blynk.virtualWrite(V2, Hum2); // print Humidity to Virtual-Pin 2 on Blynk App
+  Blynk.virtualWrite(V2, Hum2); // print humidity to Virtual-Pin 2 on Blynk App
 
-  Press2 = bme.readPressure() / 100.0F; // read Airpressure from Sensor
+  Press2 = bme.readPressure() / 100.0F; // read airpressure from sensor
   Press1 = Press2;
   lcd.setCursor(9, 1);
   lcd.print("       ");
   lcd.setCursor(9, 1);
-  lcd.print(Press1);  // print Airpressure to LCD
+  lcd.print(Press1);  // print airpressure to LCD
   lcd.print("hPa");
-  Blynk.virtualWrite(V3, Press2); // print Airpressure to Virtual-Pin 3 on Blynk App
+  Blynk.virtualWrite(V3, Press2); // print airpressure to Virtual-Pin 3 on Blynk App
 }
 
 void myTimerEvent()
 {
-  Blynk.virtualWrite(V5, millis() / 60000);
+  Blynk.virtualWrite(V5, millis() / 60000);  // send the online-time to Virtual-Pin 5 on Blynk App (in minutes)
 }
