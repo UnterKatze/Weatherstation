@@ -12,7 +12,7 @@
 
 
         %%%%%Wiring%%%%%
-        
+
    LCD RS pin to D8 of NodeMCU
    LCD Enable pin to D7 of NodeMCU
    LCD D4 pin to D5 of NodeMCU
@@ -37,11 +37,11 @@
 #include <Adafruit_BME280.h>
 
 #define BLYNK_PRINT Serial
-#define SEALEVELPRESSURE_HPA (1013.25) // airpressure at sealevel for your location
+#define SEALEVELPRESSURE_HPA (1013.25) // airpressure at Sealevel for your Location
 
-char auth[] = ""; // your Blynk authentification token
-char ssid[] = "";  // your Wifi name
-char pass[] = ""; // your Wifi password
+char auth[] = ""; // Your Blynk Authentification Token
+char ssid[] = "";  // Your Wifi Name
+char pass[] = ""; // Your Wifi Password
 
 const int rs = D8, en = D7, d4 = D5, d5 = D4, d6 = D3, d7 = D0;
 unsigned long delayTime = 6000; // delay im ms for sending Data to Display and Blynk App
@@ -57,7 +57,7 @@ LiquidCrystal lcd(rs, en, d4, d5, d6, d7);
 Adafruit_BME280 bme;
 BlynkTimer timer;
 
-void setup() 
+void setup()
 {
   Blynk.begin(auth, ssid, pass);  // start Blynk
   lcd.begin(16, 2); // start LCD
@@ -79,18 +79,18 @@ void setup()
   lcd.setCursor(9, 0);
   lcd.print("Press");
 
-  timer.setInterval(1000L, myTimerEvent); // online-time in ms
+  timer.setInterval(1000L, myTimerEvent); // online Time in ms
 }
 
 void loop()
 {
   Blynk.run();  // start Blynk
-  timer.run();  // start timer
+  timer.run();  // start Timer
   printValues();  // function for printing values on display and Blynk App
   delay(delayTime);
   if (millis() >= 86400000)
-  { // restart Device every 24h
-    ESP.restart();
+  {
+    ESP.restart();  // restart device every 24h
   }
 }
 
@@ -101,14 +101,13 @@ void printValues()
   lcd.setCursor(0, 1);
   lcd.print("     ");
   lcd.setCursor(0, 1);
-  if (Temp1 >= 0) {
+  if (Temp1 >= 0)
+  {
     lcd.print("+");
-  } else {
-    lcd.print("-");
   }
   lcd.print(Temp1); // print temperature to LCD
   lcd.print("C");
-  Blynk.virtualWrite(V1, Temp2);  // print temperature to Virtual-Pin 1 on Blynk App
+  Blynk.virtualWrite(V1, Temp2);  // print temperature to virtual-pin 1 on Blynk App
 
   Hum2 = bme.readHumidity();  // read humidity from sensor
   if (Hum2 >= 100)  // I had problems with humidity spikes over 100%, lol
@@ -121,7 +120,7 @@ void printValues()
   lcd.setCursor(5, 1);
   lcd.print(Hum1);  // print humidity to LCD
   lcd.print("%");
-  Blynk.virtualWrite(V2, Hum2); // print humidity to Virtual-Pin 2 on Blynk App
+  Blynk.virtualWrite(V2, Hum2); // print humidity to virtual-pin 2 on Blynk App
 
   Press2 = bme.readPressure() / 100.0F; // read airpressure from sensor
   Press1 = Press2;
@@ -130,10 +129,10 @@ void printValues()
   lcd.setCursor(9, 1);
   lcd.print(Press1);  // print airpressure to LCD
   lcd.print("hPa");
-  Blynk.virtualWrite(V3, Press2); // print airpressure to Virtual-Pin 3 on Blynk App
+  Blynk.virtualWrite(V3, Press2); // print airpressure to virtual-pin 3 on Blynk App
 }
 
 void myTimerEvent()
 {
-  Blynk.virtualWrite(V5, millis() / 60000);  // send the online-time to Virtual-Pin 5 on Blynk App (in minutes)
+  Blynk.virtualWrite(V5, millis() / 60000); // send the online-time to virtual-pin 5 on Blynk App (in minutes)
 }
